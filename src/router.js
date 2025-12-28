@@ -1,70 +1,40 @@
-// Router - loads pages dynamically
+// Simple hash router
 
 (function() {
-    const container = document.getElementById('mainContent');
-    let currentScript = null;
-
     function loadPage() {
-        const hash = window.location.hash.slice(1) || 'home';
+        const page = window.location.hash.slice(1) || 'home';
+        const container = document.getElementById('mainContent');
         
-        if (!container) {
-            console.error('mainContent container not found');
-            return;
-        }
+        if (!container) return;
 
-        // Clear container
-        container.innerHTML = '';
-
-        // Update active nav link
+        // Update nav
         document.querySelectorAll('.nav-link').forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === `#${hash}`) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${page}`) {
                 link.classList.add('active');
-            } else {
-                link.classList.remove('active');
             }
         });
 
-        // Remove previous page script
-        if (currentScript) {
-            currentScript.remove();
-            currentScript = null;
-        }
-
-        // Load new page script
-        currentScript = document.createElement('script');
-        currentScript.src = `src/pages/${hash}.js`;
+        // Load page script
+        const script = document.createElement('script');
+        script.src = `src/pages/${page}.js`;
         
-        currentScript.onload = function() {
-            const initFunction = window[`init${capitalize(hash)}`];
-            if (typeof initFunction === 'function') {
-                initFunction(container);
-            } else {
-                console.error(`Init function not found for ${hash}`);
-                container.innerHTML = `<h1 class="page-title">Error loading ${hash}</h1>`;
-            }
+        script.onload = () => {
+            const initFunc = window[`init${page.charAt(0).toUpperCase() + page.slice(1)}`];
+            if (initFunc) initFunc(container);
         };
 
-        currentScript.onerror = function() {
-            console.error(`Failed to load page: ${hash}`);
-            container.innerHTML = `<h1 class="page-title">Page not found</h1>`;
+        script.onerror = () => {
+            container.innerHTML = `<h1 class="page-title">404 - Page not found</h1>`;
         };
 
-        document.body.appendChild(currentScript);
+        document.body.appendChild(script);
     }
 
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Listen for hash changes
     window.addEventListener('hashchange', loadPage);
-    
-    // Load initial page
-    window.addEventListener('DOMContentLoaded', loadPage);
-    
-    // If already loaded
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(loadPage, 0);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadPage);
+    } else {
+        loadPage();
     }
 })();
