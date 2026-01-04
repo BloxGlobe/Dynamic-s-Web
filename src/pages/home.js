@@ -6,7 +6,7 @@ function loadHomeCSS() {
   const link = document.createElement("link");
   link.id = "home-friend-css";
   link.rel = "stylesheet";
-  link.href = "src/utils/css/friends/friend.css";
+  link.href = "src/utils/css/friends.css/friend.css";
   document.head.appendChild(link);
 }
 
