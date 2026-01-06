@@ -63,19 +63,6 @@ export default function initLibrary(container) {
     </div>
   `;
 
-  function updateUserBanner() {
-    const banner = document.getElementById('userBanner');
-    if (!banner) return;
-    const user = window.SessionManager?.getUser() || null;
-    banner.innerHTML = user ? `Signed in as <strong>${user.username || user.email}</strong>` : 'Not signed in';
-  }
-
-  updateUserBanner();
-  window.addEventListener('session:login', updateUserBanner);
-  window.addEventListener('session:logout', updateUserBanner);
-  window.addEventListener('session:update', updateUserBanner);
-}
-
 /* card helpers */
 
 function renderUserCard(name) {
@@ -103,4 +90,4 @@ function renderGenericCard(label) {
       <span>${label}</span>
     </div>
   `;
-}
+} 

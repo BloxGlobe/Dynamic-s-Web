@@ -36,19 +36,6 @@ function initCommunities(container) {
   renderSidebar();
   renderEmptyState();
 
-  function updateUserBanner() {
-    const banner = document.getElementById('userBanner');
-    if (!banner) return;
-    const user = window.SessionManager?.getUser() || null;
-    banner.innerHTML = user ? `Signed in as <strong>${user.username || user.email}</strong>` : 'Not signed in';
-  }
-
-  updateUserBanner();
-  window.addEventListener('session:login', updateUserBanner);
-  window.addEventListener('session:logout', updateUserBanner);
-  window.addEventListener('session:update', updateUserBanner);
-}
-
 function setupEvents() {
   const search = document.querySelector(".search-communities input");
   if (!search) return;
