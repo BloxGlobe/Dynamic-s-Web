@@ -1,17 +1,20 @@
 // src/module/auth-module/register-login/render.js
 // Renders login and register modules
 
-import { createLoginForm } from './login.js';
-import { createRegisterForm } from './register.js';
+import { createLoginForm } from '../login.js';
+import { createRegisterForm } from '../register.js';
 
-/* ============ LOGIN RENDERER ============ */
+// Re-export the low-level creators so other modules can import them directly:
+export { createLoginForm, createRegisterForm };
+
+/* render login.js */
 export function renderLogin(container) {
   container.innerHTML = '';
   const loginElement = createLoginForm();
   container.appendChild(loginElement);
 }
 
-/* ============ REGISTER RENDERER ============ */
+/* render register.js */
 export function renderRegister(container) {
   container.innerHTML = '';
   const registerElement = createRegisterForm();

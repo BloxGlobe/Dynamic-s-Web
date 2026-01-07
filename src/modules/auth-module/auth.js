@@ -1,10 +1,10 @@
-// src/module/auth-module/auth.js
+// src/modules/auth-module/auth.js
 // Minimal auth module - boots up register-login module
 
-import { renderLogin, renderRegister } from './register-login/renders/render.js';
-import './session-manager/session.js';
+// Use dynamic imports for the register-login renderers so loading failures
+// can be caught and handled at runtime instead of throwing during static import.
 
-/* ============ AUTH INITIALIZATION ============ */
+/* -----*/
 let initialized = false;
 
 export function initAuth() {
@@ -13,8 +13,8 @@ export function initAuth() {
   console.log('[Auth] Module initialized');
 }
 
-/* ============ BOOT UI ============ */
-export function bootLogin(containerId = 'app') {
+/* --------- */
+export async function bootLogin(containerId = 'app') {
   const container = typeof containerId === 'string' 
     ? document.getElementById(containerId) 
     : containerId;
@@ -23,11 +23,21 @@ export function bootLogin(containerId = 'app') {
     console.error('[Auth] Container not found:', containerId);
     return;
   }
-  
-  renderLogin(container);
+
+  try {
+    const mod = await import('./register-login/renders/render.js');
+    if (mod && typeof mod.renderLogin === 'function') {
+      mod.renderLogin(container);
+    } else {
+      throw new Error('renderLogin not exported from module');
+    }
+  } catch (err) {
+    console.error('[Auth] Failed to load login renderer:', err);
+    container.innerHTML = '<div class="auth-error">Unable to load login form. Please try again later.</div>';
+  }
 }
 
-export function bootRegister(containerId = 'app') {
+export async function bootRegister(containerId = 'app') {
   const container = typeof containerId === 'string' 
     ? document.getElementById(containerId) 
     : containerId;
@@ -36,8 +46,18 @@ export function bootRegister(containerId = 'app') {
     console.error('[Auth] Container not found:', containerId);
     return;
   }
-  
-  renderRegister(container);
+
+  try {
+    const mod = await import('./register-login/renders/render.js');
+    if (mod && typeof mod.renderRegister === 'function') {
+      mod.renderRegister(container);
+    } else {
+      throw new Error('renderRegister not exported from module');
+    }
+  } catch (err) {
+    console.error('[Auth] Failed to load register renderer:', err);
+    container.innerHTML = '<div class="auth-error">Unable to load registration form. Please try again later.</div>';
+  }
 }
 
 /* ============ MOCK API ============ */
